@@ -16,24 +16,29 @@ namespace Track_My_Work
         public DataTable Source { get; set; }
         public Form()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            DBProvider.CreateDB();
-            dataGridView.DataSource = Source;
+                DBProvider.CreateDB();
+                dataGridView.DataSource = Source;
 
-            SystemEvents.SessionSwitch += new SessionSwitchEventHandler(Tracker.SessionSwitch);
-            SystemEvents.SessionSwitch += new SessionSwitchEventHandler(LoadGridSource);
+                SystemEvents.SessionSwitch += new SessionSwitchEventHandler(Tracker.SessionSwitch);
+                SystemEvents.SessionSwitch += new SessionSwitchEventHandler(LoadGridSource);
 
-            Tracker.SessionSwitch(null, new SessionSwitchEventArgs(SessionSwitchReason.SessionLogon));
-            LoadGridSource(null, null);
+                Tracker.SessionSwitch(null, new SessionSwitchEventArgs(SessionSwitchReason.SessionLogon));
+                LoadGridSource(null, null);
 
-            SetViewSettings();
+                SetViewSettings();
 
-            var host = new WebServiceHost(typeof(Service), new Uri("http://localhost:8000/"));
-            var ep = host.AddServiceEndpoint(typeof(IService), new WebHttpBinding(), "");
-            host.Open();
-
-           var s = StatProvider. GetStatisticsInfo();
+                var host = new WebServiceHost(typeof(Service), new Uri("http://localhost:8000/"));
+                var ep = host.AddServiceEndpoint(typeof(IService), new WebHttpBinding(), "");
+                host.Open();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
         }
 
         private void SetViewSettings(object sender=null, EventArgs e=null)
