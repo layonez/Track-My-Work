@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html style="
+    background: #e7ebf0;
+">
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="jquery-1.12.0.min.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.3.1/jsgrid.min.css">
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.3.1/jsgrid-theme.min.css">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.3.1/jsgrid.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            google.charts.load('current', { 'packages': ['corechart'] });
+        });
+        
+        var initGrid = function (data) {
+
+            $("#jsGrid").jsGrid({
+                width: "100%",
+                height: "400px",
+
+                filtering: false,
+                editing: false,
+                sorting: true,
+
+                data: data,
+                noDataContent: "Пока что нет записей для отображения",
+                loadIndication: true,
+                loadIndicationDelay: 500,
+                loadMessage: "Загрузка...",
+                rowClick: function (args) {
+                    drawChart(args.item);
+                },
+                fields: [
+                    { title: "Дата", name: "Day", formatter: "date", formatoptions: { srcformat: 'U', newformat: 'd/m/Y' }, type: "date", width: 150 },
+                    { title: "Общее время в офисе", name: "WorkTime", type: "text"},
+                    { title: "Время за ПК", name: "ActiveTime", type: "text"},
+                    { title: "Прогулки по офису", name: "NotPcTime", type: "text" },
+                    { title: "Колличество отходов от ПК", name: "AwayTimes", type: "text" }
+                ]
+            });
+
+        }
+        //var getData = function () {
+        //    var r = $.ajax({
+        //        url: "http://localhost:8000/GetDayInfo",
+
+        //        // The name of the callback parameter, as specified by the YQL service
+        //        jsonp: "callback",
+        //        data: { day: -1 },
+        //        // Tell jQuery we're expecting JSONP
+        //        dataType: "json",
+
+        //        error: function (response) {
+        //            console.log(response); // server response
+        //        },
+        //        // Work with the response
+        //        success: function (response) {
+        //            drawChart(response);
+        //            console.log(response); // server response
+        //        }
+        //    });
+
+        //    if (r.responseJSON) {
+        //        drawChart(r.responseJSON.workTime);
+        //    }
+        //};
+
+        function formatSeconds(seconds) {
+            var date = new Date(1970, 0, 1);
+            date.setSeconds(seconds);
+            return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+        }
+
+        var getDataSource = function () {
+            var r = $.ajax({
+                url: "http://localhost:8000/GetDatasource",
+
+                // The name of the callback parameter, as specified by the YQL service
+                jsonp: "callback",
+                // Tell jQuery we're expecting JSONP
+                dataType: "json",
+
+                error: function (response) {
+                    console.log(response); // server response
+                },
+                // Work with the response
+                success: function (response) {
+                    $.each(response, function( index, value ) {
+                        value.Day = new Date(value.Day.match(/\d+/)[0] * 1).toLocaleDateString();
+                        value.activeTime = value.ActiveTime;
+                        value.workTime = value.WorkTime;
+                        value.ActiveTime = formatSeconds(value.ActiveTime);
+                        value.WorkTime = formatSeconds(value.WorkTime);
+                        value.notPcTime = value.workTime - value.activeTime;
+                        value.NotPcTime = formatSeconds(value.notPcTime);
+                    });
+
+                    initGrid(response);
+                    console.log(response); // server response
+                }
+            });
+
+            if (r.responseJSON) {
+                drawChart(r.responseJSON.workTime);
+            }
+        };
+        getDataSource();
+        
+        function drawChart(time) {
+
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['АФК', (time.workTime - time.activeTime)/3600],
+                ['За компьютером', (time.activeTime)/3600],
+                ['Внерабочая активность', (24 * 60 * 60 - time.workTime) / 3600]
+            ]);
+
+            var options = {
+                is3D: true,
+                backgroundColor: '#e7ebf0',
+                slices: { 0: { color: '#ff6666' }, 1: { color: '#b3ff66' }, 2: { color: '#a7a7be' } }
+            };
+            if (google.visualization.PieChart) {
+                var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+                chart.draw(data, options);
+            } else {
+                google.setOnLoadCallback(function() {
+                    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+                    chart.draw(data, options);
+                });
+            }
+            
+            
+
+        }
+
+
+    </script>
+    <link id="load-css-0" rel="stylesheet" type="text/css" href="https://www.gstatic.com/charts/current/css/util/util.css">
+    <link id="load-css-0" rel="stylesheet" type="text/css" href="https://www.gstatic.com/charts/current/css/util/util.css">
+    <link id="load-css-1" rel="stylesheet" type="text/css" href="https://www.gstatic.com/charts/current/css/core/tooltip.css">
+    <link id="load-css-1" rel="stylesheet" type="text/css" href="https://www.gstatic.com/charts/current/css/core/tooltip.css">
+</head>
+
+
+<body style="margin: 0;">
+    <div id="page">
+        <div id="header" style="box-sizing: border-box; height: 50px; background-color: #3a6d99;display: block;vertical-align: middle;">
+            <div id="logo" style="box-sizing: border-box; height: 50px; background-color: #3a6d99; overflow: hidden; position: relative; padding-left: 30px; padding-top: 5px; padding-bottom: 5px;display: inline-block;">
+                <a style="vertical-align: middle"><img style="height: 100%;" src="tmw.ico"></a>
+                <span style="font-size: xx-large;color: white;vertical-align: super;font-family: monospace;padding-left: 10px;">Тайм менеджмент</span>
+            </div>
+        </div>
+        <div id="info">
+            <div id="detailInfo">
+                <div id="piechart" style="width: 50%; height: 400px"></div>
+            </div>
+            <div id="grid">
+                <div id="jsGrid" style="width: 900px; height: 200px;"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--<div id="header" style="height: 60px; background-color: #666"><ul>
+        <li style="display: inline;"><img src="http://www.croc.ru/bitrix/templates/croc_main_new2/images/croc.png"></img></li>
+        <li style="display: inline;">Шапокляк</li>
+    </ul> </div>
+        <div id="piechart" style="width: 900px; height: 500px;"></div>
+
+        <div id="jsGrid" style="width: 900px; height: 200px;"></div>-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_format_module.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_format_module.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_default_module.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_ui_module.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_corechart_module.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_default_module.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_ui_module.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_corechart_module.js"></script>
+
+
+</body>
+</html>
