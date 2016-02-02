@@ -48,6 +48,7 @@ namespace Track_My_Work
 
             ShowInTaskbar = false;
             WindowState = FormWindowState.Minimized;
+            this.Visible = false;
         }
 
         private void LoadGridSource(object sender, SessionSwitchEventArgs e)
@@ -68,7 +69,6 @@ namespace Track_My_Work
             var converted = uri.AbsoluteUri;
 
             System.Diagnostics.Process.Start(defBrowser, converted);
-            this.Activate();
         }
         private static string GetDefaultBrowserPath()
         {

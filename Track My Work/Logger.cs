@@ -13,7 +13,7 @@ namespace Track_My_Work
 
         public static void Log(Exception ex)
         {
-            File.AppendAllLines(Path, new[] {ex.Message,ex.StackTrace,Environment.NewLine});
+            File.AppendAllLines(Path, new[] {DateTime.Now.ToString(), ex.Message, ex.StackTrace,Environment.NewLine});
         }
     }
 }
