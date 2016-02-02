@@ -20,5 +20,8 @@ namespace Track_My_Work
         [WebGet]
         IEnumerable<DayInfo> GetDatasource();
 
+        [OperationContract]
+        [WebGet]
+        StatInfo GetStatInfo();
     }
 }

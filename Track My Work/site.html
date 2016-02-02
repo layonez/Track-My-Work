@@ -43,36 +43,17 @@
             });
 
         }
-        //var getData = function () {
-        //    var r = $.ajax({
-        //        url: "http://localhost:8000/GetDayInfo",
-
-        //        // The name of the callback parameter, as specified by the YQL service
-        //        jsonp: "callback",
-        //        data: { day: -1 },
-        //        // Tell jQuery we're expecting JSONP
-        //        dataType: "json",
-
-        //        error: function (response) {
-        //            console.log(response); // server response
-        //        },
-        //        // Work with the response
-        //        success: function (response) {
-        //            drawChart(response);
-        //            console.log(response); // server response
-        //        }
-        //    });
-
-        //    if (r.responseJSON) {
-        //        drawChart(r.responseJSON.workTime);
-        //    }
-        //};
 
         function formatSeconds(seconds) {
             var date = new Date(1970, 0, 1);
             date.setSeconds(seconds);
             return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
         }
+
+        function loadStatBlock(data) {
+            $('#averageStartTime').text(formatSeconds(data.averageStartTime));
+            $('#averageEndTime').text(formatSeconds(data.averageEndTime));
+        };
 
         var getDataSource = function () {
             var r = $.ajax({
@@ -107,7 +88,30 @@
                 drawChart(r.responseJSON.workTime);
             }
         };
+        var getStatInfo = function () {
+            var r = $.ajax({
+                url: "http://localhost:8000/GetStatInfo",
+
+                // The name of the callback parameter, as specified by the YQL service
+                jsonp: "callback",
+                // Tell jQuery we're expecting JSONP
+                dataType: "json",
+
+                error: function (response) {
+                    console.log(response); // server response
+                },
+                // Work with the response
+                success: function (response) {
+                    loadStatBlock(response);
+                }
+            });
+
+            if (r.responseJSON) {
+                drawChart(r.responseJSON.workTime);
+            }
+        };
         getDataSource();
+        getStatInfo();
         
         function drawChart(time) {
 
@@ -158,8 +162,24 @@
             </div>
         </div>
         <div id="info">
-            <div id="detailInfo">
+            <div id="detailInfo" style="display: -webkit-box;font-family: monospace;">
                 <div id="piechart" style="width: 50%; height: 400px"></div>
+                <div style="display: table;" id="statBlock">
+
+                    <p style="display: table-row; font-size: xx-large;">Статистика</p>
+                    <div style="margin-left: 20px;">
+                        
+                        <span style="display: table-row;">
+                            <span style="font-size: x-large;">Среднее время прихода на работу: </span>
+                            <span style="font-size: x-large;" id="averageStartTime"></span>
+                        </span>
+                        <span style="display: table-row;">
+                            <span style="font-size: x-large;">Среднее время ухода с работы: </span>
+                            <span style="font-size: x-large;" id="averageEndTime"></span>
+                        </span>
+
+                    </div>
+                </div>
             </div>
             <div id="grid">
                 <div id="jsGrid" style="width: 900px; height: 200px;"></div>

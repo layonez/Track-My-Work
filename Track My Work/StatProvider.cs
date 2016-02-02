@@ -41,18 +41,18 @@ namespace Track_My_Work
             }
         }
 
-        public static object GetStatisticsInfo()
+        public static StatInfo GetStatisticsInfo()
         {
-            long averageStartTime = (long) DBProvider.StartTimes().Average(d=>d.Ticks);
-            long averageEndTime = (long)DBProvider.EndTimes().Average(d => d.Ticks);
+            var averageStartTime = TimeSpan.FromTicks((long) DBProvider.StartTimes().Average(d=>d.Ticks)).TotalSeconds;
+            var averageEndTime = TimeSpan.FromTicks((long) DBProvider.EndTimes().Average(d=>d.Ticks)).TotalSeconds;
             
-            return new StatInfo() {averageStartTime = new TimeSpan(averageStartTime), averageEndTime = new TimeSpan(averageEndTime) };
+            return new StatInfo() {averageStartTime = averageStartTime, averageEndTime = averageEndTime };
         }
     }
 
-    class StatInfo
+    public class StatInfo
     {
-        public TimeSpan averageStartTime { get; set; }
-        public TimeSpan averageEndTime { get; set; }
+        public double averageStartTime { get; set; }
+        public double averageEndTime { get; set; }
     }
 }

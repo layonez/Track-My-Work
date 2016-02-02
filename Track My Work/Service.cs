@@ -7,6 +7,24 @@ namespace Track_My_Work
 {
     public class Service : IService
     {
+        public StatInfo GetStatInfo()
+        {
+            try
+            {
+                if (WebOperationContext.Current != null)
+                {
+                    WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Json;
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add("Access-Control-Allow-Origin", "*");
+                }
+
+                return StatProvider.GetStatisticsInfo();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+            }
+            return new StatInfo();
+        }
         public Response GetDayInfo(int day)
         {
             try
