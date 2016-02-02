@@ -152,8 +152,7 @@ namespace Track_My_Work
                 sqlite.Open();
 
                 const string sql =
-                    "SELECT TIME, MIN(substr(TIME,7)||substr(TIME,4,2)||substr(TIME,1,2)) as STR FROM LOG  ORDER BY substr(TIME,7)||substr(TIME,4,2)||substr(TIME,1,2)";
-                    //@"SELECT MIN(TIME) as TIME FROM LOG  ORDER BY TIME";
+                    "SELECT TIME, MIN(substr(TIME,7,4)||substr(TIME,4,2)||substr(TIME,1,2)) as STR FROM LOG  ORDER BY STR";
                 var command = new SQLiteCommand(sql, sqlite);
                 command.ExecuteNonQuery();
 
