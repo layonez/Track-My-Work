@@ -1,7 +1,8 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
+using Microsoft.Win32;
 
 namespace Track_My_Work
 {
@@ -58,7 +59,7 @@ namespace Track_My_Work
             try
             {
                 var time = DateTime.Now;
-                var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                var user = WindowsIdentity.GetCurrent().Name;
 
                 DBProvider.Insert(time, reason, user);
             }

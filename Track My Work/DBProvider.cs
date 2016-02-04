@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Data.SQLite;
-using Microsoft.Win32;
-using System.Data;
 using System.Collections.Generic;
-using Track_My_Work;
+using System.Data;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
+using Microsoft.Win32;
 
 namespace Track_My_Work
 {
@@ -13,11 +13,11 @@ namespace Track_My_Work
         private static readonly List<DayOfWeek> WorkDayOfWeek = new List<DayOfWeek>() {DayOfWeek.Friday, DayOfWeek.Monday, DayOfWeek.Thursday, DayOfWeek.Saturday, DayOfWeek.Wednesday};
         private const string DBName = "tmw.sqlite";
         private static readonly string Path = AppDomain.CurrentDomain.BaseDirectory + DBName;
-        private static readonly string CS = string.Format("data source={0};version=3;new=False;datetimeformat=CurrentCulture", Path);
+        private static readonly string CS = string.Format("data source={0};version=3;new=False;datetimeformat=CurrentCulture;PRAGMA journal_mode=WAL;Pooling=True;", Path);
         
         public static void CreateDB()
         {
-            if (System.IO.File.Exists(Path)) return;
+            if (File.Exists(Path)) return;
 
             SQLiteConnection.CreateFile(Path);
 
@@ -37,7 +37,7 @@ namespace Track_My_Work
         }
         public static void Insert(DateTime time, SessionSwitchReason reason, string user)
         {
-            System.Data.SQLite.SQLiteConnection.ClearAllPools();
+            SQLiteConnection.ClearAllPools();
 
             var queryString = string.Format(@"INSERT INTO LOG (Time, Type, User) 
                                             VALUES (""{0}"", {1}, ""{2}""); ", time, (int)reason, user);            
@@ -55,7 +55,7 @@ namespace Track_My_Work
         }
         public static DataTable ReadAll()
         {
-            System.Data.SQLite.SQLiteConnection.ClearAllPools();
+            SQLiteConnection.ClearAllPools();
             var dt = new DataTable();
 
             using (var sqlite = new SQLiteConnection(CS))
@@ -79,7 +79,7 @@ namespace Track_My_Work
 
         public static IEnumerable<DateTime> StartTimes()
         {
-            System.Data.SQLite.SQLiteConnection.ClearAllPools();
+            SQLiteConnection.ClearAllPools();
             IEnumerable<DateTime> mins = new List<DateTime>();
             using (var sqlite = new SQLiteConnection(CS))
             {
@@ -101,7 +101,7 @@ namespace Track_My_Work
         }
         public static IEnumerable<DateTime> EndTimes()
         {
-            System.Data.SQLite.SQLiteConnection.ClearAllPools();
+            SQLiteConnection.ClearAllPools();
             IEnumerable<DateTime> maxs = new List<DateTime>();
 
             using (var sqlite = new SQLiteConnection(CS))
@@ -126,16 +126,16 @@ namespace Track_My_Work
 
         public static List<Entry> ReadDay(DateTime day)
         {
-            System.Data.SQLite.SQLiteConnection.ClearAllPools();
+            SQLiteConnection.ClearAllPools();
             List<Entry> data = new List<Entry>();
-            var start = day.Date;
+            var start = day.Date.AddHours(5);
             day = day.AddDays(1);
-            var end = day.Date;
+            var end = day.Date.AddHours(5);
             
             using (var sqlite = new SQLiteConnection(CS))
             {
                 
-                var sql = string.Format(@"SELECT * FROM LOG WHERE TIME > ""{0}"" AND TIME < ""{1}"" ", start, end);
+                var sql = string.Format(@"SELECT * FROM LOG  WHERE TIME > ""{0}"" AND TIME < ""{1}"" ", start, end);
                
                 using (var command = new SQLiteCommand(sql, sqlite))
                 {
@@ -154,7 +154,7 @@ namespace Track_My_Work
         }
         public static DateTime? GetLogStartDay()
         {
-            System.Data.SQLite.SQLiteConnection.ClearAllPools();
+            SQLiteConnection.ClearAllPools();
             DateTime? data = null;
             using (var sqlite = new SQLiteConnection(CS))
             {

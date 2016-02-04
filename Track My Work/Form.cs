@@ -1,10 +1,11 @@
-﻿using System.Windows.Forms;
-using Microsoft.Win32;
-using System;
-using System.Drawing;
+﻿using System;
 using System.Data;
-using System.ServiceModel.Web;
+using System.Diagnostics;
+using System.Drawing;
 using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace Track_My_Work
 {
@@ -65,10 +66,10 @@ namespace Track_My_Work
                 this.WindowState = FormWindowState.Normal;
             var defBrowser = GetDefaultBrowserPath();
             var filePath = string.Format("file:///{0}", path);
-            var uri = new System.Uri(filePath);
+            var uri = new Uri(filePath);
             var converted = uri.AbsoluteUri;
 
-            System.Diagnostics.Process.Start(defBrowser, converted);
+            Process.Start(defBrowser, converted);
         }
         private static string GetDefaultBrowserPath()
         {
