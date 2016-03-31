@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Track_My_Work
 {
+    /// <summary>
+    /// experimental functions, not working properly
+    /// </summary>
     static class StatProvider
     {
         public static List<DayInfo> GetAllDayInfos()
@@ -16,6 +19,7 @@ namespace Track_My_Work
                      
             return CalculateDayInfos(startDate.Value, endDate).ToList();
         }
+
         private static IEnumerable<DayInfo> CalculateDayInfos(DateTime startDate, DateTime endDate) {
 
             var day = startDate.Date;
@@ -38,18 +42,12 @@ namespace Track_My_Work
             }
         }
 
-        public static StatInfo GetStatisticsInfo()
+        public static StatInfoDto GetStatisticsInfo()
         {
             var averageStartTime = TimeSpan.FromTicks((long) DBProvider.StartTimes().Average(d=>d.Ticks)).TotalSeconds;
             var averageEndTime = TimeSpan.FromTicks((long) DBProvider.EndTimes().Average(d=>d.Ticks)).TotalSeconds;
             
-            return new StatInfo() {averageStartTime = averageStartTime, averageEndTime = averageEndTime };
+            return new StatInfoDto() {averageStartTime = averageStartTime, averageEndTime = averageEndTime };
         }
-    }
-
-    public class StatInfo
-    {
-        public double averageStartTime { get; set; }
-        public double averageEndTime { get; set; }
     }
 }

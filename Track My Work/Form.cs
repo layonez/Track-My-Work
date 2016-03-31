@@ -31,7 +31,7 @@ namespace Track_My_Work
                 LoadGridSource(null, null);
 
                 SetViewSettings();
-
+                //init host for test client
                 var host = new WebServiceHost(typeof(Service), new Uri("http://localhost:8001/"));
                 var ep = host.AddServiceEndpoint(typeof(IService), new WebHttpBinding(), "");
                 host.Open();

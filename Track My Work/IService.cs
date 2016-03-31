@@ -17,6 +17,6 @@ namespace Track_My_Work
 
         [OperationContract]
         [WebGet]
-        StatInfo GetStatInfo();
+        StatInfoDto GetStatInfo();
     }
 }

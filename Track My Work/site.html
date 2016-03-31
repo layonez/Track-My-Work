@@ -1,4 +1,10 @@
 ﻿<!DOCTYPE html>
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+stub client page for testing.
+//todo move to wpf
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 <html style="
     background: #e7ebf0;
 ">
@@ -57,7 +63,7 @@
 
         var getDataSource = function () {
             var r = $.ajax({
-                url: "http://localhost:8000/GetDatasource",
+                url: "http://localhost:8001/GetDatasource",
 
                 // The name of the callback parameter, as specified by the YQL service
                 jsonp: "callback",
@@ -184,16 +190,6 @@
             </div>
         </div>
     </div>
-
-
-
-    <!--<div id="header" style="height: 60px; background-color: #666"><ul>
-        <li style="display: inline;"><img src="http://www.croc.ru/bitrix/templates/croc_main_new2/images/croc.png"></img></li>
-        <li style="display: inline;">Шапокляк</li>
-    </ul> </div>
-        <div id="piechart" style="width: 900px; height: 500px;"></div>
-
-        <div id="jsGrid" style="width: 900px; height: 200px;"></div>-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_format_module.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_format_module.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_default_module.js"></script>
@@ -202,7 +198,5 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_default_module.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_ui_module.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/current/js/jsapi_compiled_corechart_module.js"></script>
-
-
 </body>
 </html>
