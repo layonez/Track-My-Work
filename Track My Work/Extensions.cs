@@ -41,6 +41,11 @@ namespace Track_My_Work
             return reader.Select(r =>
                 DateTime.Parse(r["Time"].ToString())).ToList();
         }
+
+        public static string ToSqlOrderedString(this DateTime d)
+        {
+            return d.ToString("yyyyMMddHHmmss");
+        }
     }
 
     

@@ -13,8 +13,8 @@ namespace Track_My_Work
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form());
 
-            DBProvider.CreateDB();
-            SystemEvents.SessionSwitch += new SessionSwitchEventHandler(Tracker.SessionSwitch);
+            DBProvider.CreateDBIfNotExist();
+            SystemEvents.SessionSwitch += Tracker.SessionSwitch;
         }
     }
 }

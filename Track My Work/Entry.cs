@@ -15,6 +15,9 @@ namespace Track_My_Work
         public DateTime Day { get; set; }
         public double? ActiveTime { get; set; }
         public double? WorkTime { get; set; }
+        /// <summary>
+        /// count of session start times 
+        /// </summary>
         public int AwayTimes { get; set; }
 
     }

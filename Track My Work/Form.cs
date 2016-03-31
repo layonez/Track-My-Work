@@ -11,9 +11,9 @@ namespace Track_My_Work
 {
     public partial class Form : System.Windows.Forms.Form
     {
-        private const string site = "site.html";
-        private static string path = AppDomain.CurrentDomain.BaseDirectory + site;
-        private NotifyIcon notifyIcon;
+        private const string FileName = "fileName.html";
+        private static readonly string Path = AppDomain.CurrentDomain.BaseDirectory + FileName;
+        private NotifyIcon _notifyIcon;
         public DataTable Source { get; set; }
         public Form()
         {
@@ -21,18 +21,18 @@ namespace Track_My_Work
             {
                 InitializeComponent();
 
-                DBProvider.CreateDB();
+                DBProvider.CreateDBIfNotExist();
                 dataGridView.DataSource = Source;
 
-                SystemEvents.SessionSwitch += new SessionSwitchEventHandler(Tracker.SessionSwitch);
-                SystemEvents.SessionSwitch += new SessionSwitchEventHandler(LoadGridSource);
+                SystemEvents.SessionSwitch += Tracker.SessionSwitch;
+                SystemEvents.SessionSwitch += LoadGridSource;
 
                 Tracker.SessionSwitch(null, new SessionSwitchEventArgs(SessionSwitchReason.SessionLogon));
                 LoadGridSource(null, null);
 
                 SetViewSettings();
 
-                var host = new WebServiceHost(typeof(Service), new Uri("http://localhost:8000/"));
+                var host = new WebServiceHost(typeof(Service), new Uri("http://localhost:8001/"));
                 var ep = host.AddServiceEndpoint(typeof(IService), new WebHttpBinding(), "");
                 host.Open();
             }
@@ -44,12 +44,13 @@ namespace Track_My_Work
 
         private void SetViewSettings(object sender=null, EventArgs e=null)
         {
-            notifyIcon = new NotifyIcon {Text = "Track My Work", Visible = true, Icon = new Icon("Main.ico")};
-            notifyIcon.Click += new EventHandler(this.notifyIcon_Click);
+            _notifyIcon = new NotifyIcon {Text = "Track My Work", Visible = true, Icon = new Icon("Main.ico")};
+            _notifyIcon.Click += this.notifyIcon_Click;
 
             ShowInTaskbar = false;
             WindowState = FormWindowState.Minimized;
             this.Visible = false;
+            Opacity = 0;
         }
 
         private void LoadGridSource(object sender, SessionSwitchEventArgs e)
@@ -65,7 +66,7 @@ namespace Track_My_Work
             if (this.WindowState == FormWindowState.Minimized)
                 this.WindowState = FormWindowState.Normal;
             var defBrowser = GetDefaultBrowserPath();
-            var filePath = string.Format("file:///{0}", path);
+            var filePath = string.Format("file:///{0}", Path);
             var uri = new Uri(filePath);
             var converted = uri.AbsoluteUri;
 
